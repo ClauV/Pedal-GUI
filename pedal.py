@@ -1,33 +1,20 @@
+import tkinter as tk
 
-import time
-import keyboard
+root = tk.Tk()
 
-TIME = 1.2
-def pressKey():
-    print("Press key at 2 sec\n")
+start = tk.Label(root, text="press 's' to start the game.")
+start.pack()
+quitGame = tk.Label(root, text="press 'q' to quit the game.")
+quitGame.pack()
 
-    while True:
-        if keyboard.is_pressed('q'):  # if key 'q' is pressed 
-            print('You Pressed q!')
-            break  # finishing the loop
+def key_pressed(event):
+    if event.char == 's':
+        print("Start")
+    if event.char == 'q':
+        root.quit()
 
-        print("press down\n")
-        for i in range(2):
-            keyboard.press_and_release('page up')
-            time.sleep(TIME)
+frame = tk.Frame(root, width=800, height=600)
+root.bind('<Key>', key_pressed)
+frame.pack()
 
-        for i in range(2):
-            keyboard.press_and_release('page down')
-            time.sleep(TIME)
-        time.sleep(1.5)
-
-
-
-def main():
-    print("Hello World!")
-    time.sleep(2)
-    pressKey()
-  
-
-if __name__ == "__main__":
-    main()
+root.mainloop()
