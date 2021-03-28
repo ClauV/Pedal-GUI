@@ -5,6 +5,8 @@ OpenLP Pedal arduino code
 */
 
 #define PEDAL_PIN 2
+#define DELAY 350
+
 volatile int pedal = 0;
 
 void setup() {
@@ -25,16 +27,15 @@ void loop() {
 
 
   if (pedal == 1) {
-    Serial.println("ÜP");
+    Serial.println("UP");
+    digitalWrite(13, HIGH);
+    delay(DELAY);
+    digitalWrite(13, LOW);
+    
     pedal = 0;
   }
   delay(1);
-  // Keep in mind the pull-up means the pushbutton's logic is inverted. It goes
-  // HIGH when it's open, and LOW when it's pressed. Turn on pin 13 when the
-  // button's pressed, and off when it's not:
-  //if (sensorVal == HIGH) {
-   //digitalWrite(13, HIGH);
-  // digitalWrite(13, LOW);
+
 
    
 }
