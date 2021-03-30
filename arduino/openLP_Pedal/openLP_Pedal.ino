@@ -4,38 +4,40 @@ OpenLP Pedal arduino code
 - when button pressed write UP
 */
 
-#define PEDAL_PIN 2
-#define DELAY 350
+#include "Button2.h";
 
-volatile int pedal = 0;
+#define PEDAL_PIN 2
+#define CLICK_TIME 10 //ms
+
+Button2 button = Button2(PEDAL_PIN);
 
 void setup() {
   //start serial connection
   Serial.begin(9600);
-  //configure pin 2 as an input and enable the internal pull-up resistor
+  
+  button.setLongClickTime(1000);
+  button.setDoubleClickTime(400);
+  
+  button.setClickHandler(click);
+  button.setDoubleClickHandler(doubleClick);
+  
   pinMode(PEDAL_PIN, INPUT_PULLUP);
   pinMode(13, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(PEDAL_PIN), pedalPress_ISR, FALLING); // trigger when button pressed, but not when released.
 
 }
 
-void pedalPress_ISR() {
-  pedal = 1;
+void click(Button2& btn) {
+    Serial.println("UP");
+}
+
+void doubleClick(Button2& btn) {
+    Serial.println("DOWN");
 }
 
 void loop() {
+ 
+   button.loop();
+   //delay();
+  
 
-
-  if (pedal == 1) {
-    Serial.println("UP");
-    digitalWrite(13, HIGH);
-    delay(DELAY);
-    digitalWrite(13, LOW);
-    
-    pedal = 0;
-  }
-  delay(1);
-
-
-   
 }
