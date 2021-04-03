@@ -13,9 +13,14 @@ OpenLP Pedal arduino code
 
 Button2 button = Button2(PEDAL_PIN);
 
-uint32_t clickNo = 0;
-uint32_t doubleClickNo = 0;
+typedef struct {
+uint32_t clickNo;
+uint32_t doubleClickNo;
+} buttonStat;
+
 String received;
+
+static buttonStat statistics = {0,0};
 
 void setup() {
   //start serial connection
@@ -35,36 +40,43 @@ void setup() {
 
 void longpressHandler(Button2& btn) {
     unsigned int time = btn.wasPressedFor();
-    Serial.print("You clicked ");
-    if (time > 1500) {
-        Serial.print("a really really long time.");
-    } else if (time > 1000) {
-        Serial.print("a really long time.");
-    } else if (time > 500) {
-        Serial.print("a long time.");        
-    } else {
-        Serial.print("long.");        
+  
+    if (time > 15000) {
+        statistics.clickNo = 0;
+        statistics.doubleClickNo = 0;       
     }
-    Serial.print(" (");        
-    Serial.print(time);        
-    Serial.println(" ms)");
 }
 
 void clickHandler(Button2& btn) {
     Serial.println("UP");
+    statistics.clickNo++;
+    
 }
 
 void doubleClickHandler(Button2& btn) {
     Serial.println("DOWN");
+    statistics.doubleClickNo++;
 }
 
+void getCommand() {
+  Serial.print("STAT:(No of clicks=|");
+  Serial.print(statistics.clickNo);
+  Serial.print("|;No of double clicks=|");
+  Serial.print(statistics.doubleClickNo);
+  Serial.print("|)");
+  Serial.println("");
+}
 void loop() {
    button.loop();
    //received = Serial.readString();
- 
-   if (received.indexOf("GET") != -1)
-      Serial.println("GET command");
-   
+   if (Serial.available()) {
+      received = Serial.readString();
+      Serial.println(received);
+      if (received.indexOf("GET") != -1) {
+        Serial.println("GET command");
+        getCommand();
+      }
+   }
    //delay();
   
 }
